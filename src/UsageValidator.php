@@ -50,7 +50,6 @@ class UsageValidator {
 		if ( !is_array( $variables ) ) {
 			$variables = $this->matchVariables( $variables );
 		}
-
 		$this->usedVariables = array_unique( array_merge( $this->usedVariables, $variables ) );
 	}
 
@@ -94,7 +93,7 @@ class UsageValidator {
 	}
 
 	private function matchVariables( $expression ) {
-		return $this->regexHelper->getMatches( '(^|\W)(?<!AS )\{variable}', $expression, 2 );
+		return $this->regexHelper->getMatches( '(^|\W)(?<!AS)\{variable}', $expression, 2 );
 	}
 
 	private function matchPrefixes( $expression ) {

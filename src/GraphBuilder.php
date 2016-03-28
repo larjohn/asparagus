@@ -30,6 +30,7 @@ class GraphBuilder {
 	 * @var string[] list of filter expressions
 	 */
 	private $filters = array();
+	private $binds = array();
 
 	/**
 	 * @var string[] list of unions
@@ -138,6 +139,23 @@ class GraphBuilder {
 		$this->usageValidator->trackUsedVariables( $expression );
 
 		$this->filters[] = '(' . $expression . ')';
+
+		return $this;
+	}
+	/**
+	 * Adds the given expression as a bind to this query.
+	 *
+	 * @param string $expression
+	 * @return self
+	 * @throws InvalidArgumentException
+	 */
+	public function bind( $expression ) {
+		//$this->expressionValidator->validate( $expression, ExpressionValidator::VALIDATE_FUNCTION );
+		$this->usageValidator->trackUsedPrefixes( $expression );
+		$this->usageValidator->trackUsedVariables( $expression );
+		$this->usageValidator->trackDefinedVariables( $expression );
+
+		$this->binds[] = '(' . $expression . ')';
 
 		return $this;
 	}
@@ -251,6 +269,7 @@ class GraphBuilder {
 
 		$sparql .= $this->formatOptionals();
 		$sparql .= $this->formatFilters();
+		$sparql .= $this->formatBinds();
 		$sparql .= $this->formatUnions();
 
 		return $sparql;
@@ -272,6 +291,12 @@ class GraphBuilder {
 		return implode( array_map( function( $filter ) {
 			return ' FILTER ' . $filter;
 		}, $this->filters ) );
+	}
+
+	private function formatBinds() {
+		return implode( array_map( function( $filter ) {
+			return ' BIND ' . $filter;
+		}, $this->binds ) );
 	}
 
 	private function formatUnions() {

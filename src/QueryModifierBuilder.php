@@ -82,7 +82,9 @@ class QueryModifierBuilder {
 
 		$this->usageValidator->trackUsedPrefixes( $expression );
 		$this->usageValidator->trackUsedVariables( $expression );
-		$this->modifiers['ORDER BY'] = $direction . ' (' . $expression . ')';
+		$this->modifiers['ORDER BY'] = isset($this->modifiers['ORDER BY'])?$this->modifiers['ORDER BY'].' '. $direction . '(' . $expression . ')': ''. $direction . '(' . $expression . ')';
+
+
 	}
 
 	/**
