@@ -247,6 +247,34 @@ class QueryBuilder {
 	}
 
 	/**
+	 * Adds the given expression as a values to this query.
+	 *
+	 * @since 0.3
+	 *
+	 * @param string $expression
+	 * @return self
+	 * @throws InvalidArgumentException
+	 */
+	public function values( array $values ) {
+		$this->graphBuilder->values( $values );
+		return $this;
+	}
+
+	/**
+	 * Adds the given expression as a bind to this query.
+	 *
+	 * @since 0.3
+	 *
+	 * @param string $expression
+	 * @return self
+	 * @throws InvalidArgumentException
+	 */
+	public function bind( $expression ) {
+		$this->graphBuilder->bind( $expression );
+		return $this;
+	}
+
+	/**
 	 * Adds a filter that the given graph or triple exists.
 	 *
 	 * @since 0.3
