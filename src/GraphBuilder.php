@@ -31,6 +31,7 @@ class GraphBuilder {
 	 */
 	private $filters = array();
 	private $binds = array();
+	private $values = array();
 
 	/**
 	 * @var string[] list of unions
@@ -61,6 +62,7 @@ class GraphBuilder {
 	 * @var UsageValidator
 	 */
 	private $usageValidator;
+
 
 	/**
 	 * Package-private constructor, use QueryBuilder::newSubgraph instead
@@ -139,6 +141,44 @@ class GraphBuilder {
 		$this->usageValidator->trackUsedVariables( $expression );
 
 		$this->filters[] = '(' . $expression . ')';
+
+		return $this;
+	}
+
+	/**
+	 * Adds the given expression as a values to this query.
+	 *
+	 * @param string $expression
+	 * @return self
+	 * @throws InvalidArgumentException
+	 */
+	public function values(array $values) {
+
+	    if(!empty($values)){
+	        $variables = array_keys(array_flatten($values,1));
+          //  $this->usageValidator->trackUsedVariables( $variables );
+
+            $variablesList = implode(" ", array_map(function($variable){return "?{$variable}";},$variables));
+            $expression = "VALUES($variablesList)\n";
+
+            $valuesList = "{". implode("\n",array_map(function($vals) use($variables){
+
+                $actualValues = [];
+
+                foreach ($variables as $variable){
+                    if(isset($vals[$variable]))$actualValues[$variable]= $vals[$variable];
+                    else $actualValues[$variable] = "UNDEF";
+                }
+                return '('.implode(" ", $actualValues).')';
+
+            }, $values))."}";
+            $expression.=$valuesList;
+            //dd($expression);
+
+            $this->values[] = $expression ;
+        }
+
+
 
 		return $this;
 	}
@@ -269,8 +309,9 @@ class GraphBuilder {
 
 		$sparql .= $this->formatOptionals();
 		$sparql .= $this->formatFilters();
-		$sparql .= $this->formatBinds();
+		$sparql .= $this->formatValues();
 		$sparql .= $this->formatUnions();
+        $sparql .= $this->formatBinds();
 
 		return $sparql;
 	}
@@ -291,6 +332,12 @@ class GraphBuilder {
 		return implode( array_map( function( $filter ) {
 			return ' FILTER ' . $filter;
 		}, $this->filters ) );
+	}
+
+	private function formatValues() {
+		return implode( array_map( function( $value ) {
+			return $value;
+		}, $this->values ) );
 	}
 
 	private function formatBinds() {

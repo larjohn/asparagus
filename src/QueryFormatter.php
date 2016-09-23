@@ -108,7 +108,8 @@ class QueryFormatter {
 			!ctype_space( end( $this->formattedParts ) ) &&
 			end( $this->formattedParts ) !== '('
 		) {
-			$this->formattedParts[] = ' ';
+		    if(!is_numeric($part))
+			    $this->formattedParts[] = ' ';
 		}
 	}
 
