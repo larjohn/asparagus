@@ -300,7 +300,9 @@ class GraphBuilder {
 	 */
 	public function getSPARQL() {
 		// add subqueries to the beginning because they are logically evaluated first
-		$sparql = $this->formatSubqueries();
+        $sparql = $this->formatValues();
+
+        $sparql .= $this->formatSubqueries();
 
 		foreach ( $this->conditions as $subject => $predicates ) {
 			$sparql .= ' ' . $subject;
@@ -309,7 +311,6 @@ class GraphBuilder {
 
 		$sparql .= $this->formatOptionals();
 		$sparql .= $this->formatFilters();
-		$sparql .= $this->formatValues();
 		$sparql .= $this->formatUnions();
         $sparql .= $this->formatBinds();
 
