@@ -33,7 +33,8 @@ class QueryPrefixBuilder {
 	public function __construct( array $prefixes, UsageValidator $usageValidator, array $excusedPrefixes = []) {
 		$this->expressionValidator = new ExpressionValidator();
 		$this->usageValidator = $usageValidator;
-		$this->setPrefixes( $prefixes, $excusedPrefixes );
+		$this->setPrefixes( $prefixes );
+		$this->setExcusedPrefixes($excusedPrefixes);
 	}
 
 	/**
@@ -42,7 +43,7 @@ class QueryPrefixBuilder {
 	 * @param string[] $prefixes
 	 * @throws InvalidArgumentException
 	 */
-	private function setPrefixes( array $prefixes, array $excusedPrefixes = [] ) {
+	private function setPrefixes( array $prefixes ) {
 		foreach ( $prefixes as $prefix => $iri ) {
 			$this->expressionValidator->validate( $prefix, ExpressionValidator::VALIDATE_PREFIX );
 			$this->expressionValidator->validate( $iri, ExpressionValidator::VALIDATE_IRI );
@@ -51,7 +52,6 @@ class QueryPrefixBuilder {
 		}
 
 		$this->usageValidator->trackDefinedPrefixes( array_keys( $this->prefixes ) );
-		$this->usageValidator->excusePrefixes($excusedPrefixes);
 	}
 
 	/**
@@ -60,6 +60,16 @@ class QueryPrefixBuilder {
 	public function getPrefixes() {
 		return $this->prefixes;
 	}
+
+	private $excusedPrefixes = [];
+
+    public function setExcusedPrefixes($prefixes) {
+        $this->excusedPrefixes = $prefixes;
+        $this->usageValidator->excusePrefixes($prefixes);
+    }
+    public function getExcusedPrefixes() {
+        return $this->excusedPrefixes;
+    }
 
 	/**
 	 * Returns the plain SPARQL string of these prefixes.

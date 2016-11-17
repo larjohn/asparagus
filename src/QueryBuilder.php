@@ -339,7 +339,7 @@ class QueryBuilder {
 	 * @return QueryBuilder
 	 */
 	public function newSubquery() {
-		return new QueryBuilder( $this->prefixBuilder->getPrefixes() );
+		return new QueryBuilder( $this->prefixBuilder->getPrefixes(), $this->prefixBuilder->getExcusedPrefixes());
 	}
 
 	/**
