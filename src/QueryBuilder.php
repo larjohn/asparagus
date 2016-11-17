@@ -63,12 +63,13 @@ class QueryBuilder {
 	 * @var string[] $prefixes
 	 * @throws InvalidArgumentException
 	 */
-	public function __construct( array $prefixes = array() ) {
+	public function __construct( array $prefixes = array(), array $excusedPrefixes = []) {
 		$this->expressionValidator = new ExpressionValidator();
 		$this->usageValidator = new UsageValidator();
-		$this->prefixBuilder = new QueryPrefixBuilder( $prefixes, $this->usageValidator );
+		$this->prefixBuilder = new QueryPrefixBuilder( $prefixes, $this->usageValidator, $excusedPrefixes );
 		$this->graphBuilder = new GraphBuilder( $this->usageValidator );
 		$this->modifierBuilder = new QueryModifierBuilder( $this->usageValidator );
+
 	}
 
 	/**

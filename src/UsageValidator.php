@@ -32,7 +32,14 @@ class UsageValidator {
 	 */
 	private $definedPrefixes = array();
 
-	/**
+
+
+    /**
+     * @var string[] list of excused prefixes
+     */
+    private $excusedPrefixes = array();
+
+    /**
 	 * @var RegexHelper
 	 */
 	private $regexHelper;
@@ -92,6 +99,14 @@ class UsageValidator {
 		$this->definedPrefixes = array_merge( $this->definedPrefixes, $prefixes );
 	}
 
+
+	public function excusePrefixes($excusedPrefixes){
+	    $this->excusedPrefixes = array_keys($excusedPrefixes);
+    }
+
+
+
+
 	private function matchVariables( $expression ) {
 		return $this->regexHelper->getMatches( '(^|\W)(?<!AS)\{variable}', $expression, 2 );
 	}
@@ -111,7 +126,7 @@ class UsageValidator {
 	}
 
 	private function validatePrefixes() {
-		$diff = array_diff( $this->usedPrefixes, $this->definedPrefixes );
+		$diff = array_diff( $this->usedPrefixes, array_merge($this->definedPrefixes, $this->excusedPrefixes) );
 		if ( !empty( $diff ) ) {
 			throw new RangeException( 'The prefixes ' . implode( ', ', $diff ) . ' aren\'t defined for this query.' );
 		}

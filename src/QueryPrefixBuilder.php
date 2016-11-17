@@ -30,10 +30,10 @@ class QueryPrefixBuilder {
 	/**
 	 * @param string[] $prefixes
 	 */
-	public function __construct( array $prefixes, UsageValidator $usageValidator ) {
+	public function __construct( array $prefixes, UsageValidator $usageValidator, array $excusedPrefixes = []) {
 		$this->expressionValidator = new ExpressionValidator();
 		$this->usageValidator = $usageValidator;
-		$this->setPrefixes( $prefixes );
+		$this->setPrefixes( $prefixes, $excusedPrefixes );
 	}
 
 	/**
@@ -42,7 +42,7 @@ class QueryPrefixBuilder {
 	 * @param string[] $prefixes
 	 * @throws InvalidArgumentException
 	 */
-	private function setPrefixes( array $prefixes ) {
+	private function setPrefixes( array $prefixes, array $excusedPrefixes = [] ) {
 		foreach ( $prefixes as $prefix => $iri ) {
 			$this->expressionValidator->validate( $prefix, ExpressionValidator::VALIDATE_PREFIX );
 			$this->expressionValidator->validate( $iri, ExpressionValidator::VALIDATE_IRI );
@@ -51,6 +51,7 @@ class QueryPrefixBuilder {
 		}
 
 		$this->usageValidator->trackDefinedPrefixes( array_keys( $this->prefixes ) );
+		$this->usageValidator->excusePrefixes($excusedPrefixes);
 	}
 
 	/**
