@@ -33,7 +33,7 @@ class RegexHelper {
 	/**
 	 * @var string regex to match prefixes
 	 */
-	private static $prefix = '\w+';
+	private static $prefix = '\w\-+';
 
 	/**
 	 * @var string regex to match names after prefixes
