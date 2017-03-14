@@ -152,7 +152,7 @@ class GraphBuilder {
 	 * @return self
 	 * @throws InvalidArgumentException
 	 */
-	public function values(array $values) {
+	public function values2(array $values) {
 
 	    if(!empty($values)){
 	        $variables = array_keys(array_flatten($values,1));
@@ -182,6 +182,43 @@ class GraphBuilder {
 
 		return $this;
 	}
+	
+	/**
+	 * Adds the given expression as a values to this query.
+	 *
+	 * @param string $expression
+	 * @return self
+	 * @throws InvalidArgumentException
+	 */
+	public function values(array $values) {
+	    if(!empty($values)){
+	        $variables = array_keys($values);
+		    $variablesList = implode(" ", array_map(function($variable){return "{$variable}";},$variables));
+            $expression = "VALUES $variablesList";
+        	$valueArray = $values[$variables[0]];
+			foreach ($valueArray as $value) {
+	                    $val = trim($value, "'\"");
+	                    try {
+							$this->expressionValidator
+							->validate( $val, ExpressionValidator::VALIDATE_PREFIXED_IRI);
+						    $val = "{$val}";
+		                } 
+		                catch (InvalidArgumentException  $e){
+							if(\URL::isValidUrl($val)){
+								$val = "<{$val}>";
+							}
+							else {
+								$val = "'{$val}'";
+						    }
+		                }
+						$actualValues[] = $val;
+	                }
+			$expression .= '{' . implode(" ", $actualValues) . '}';
+            $this->values[] = $expression ;
+        }
+		return $this;
+	}
+	
 	/**
 	 * Adds the given expression as a bind to this query.
 	 *
