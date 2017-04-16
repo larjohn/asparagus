@@ -152,10 +152,10 @@ class GraphBuilder {
 	 * @return self
 	 * @throws InvalidArgumentException
 	 */
-	public function values2(array $values) {
+	public function values_multi(array $values) {
 
 	    if(!empty($values)){
-	        $variables = array_keys(array_flatten($values,1));
+	        $variables = array_keys(array_flatten($values));
           //  $this->usageValidator->trackUsedVariables( $variables );
 
             $variablesList = implode(" ", array_map(function($variable){return "?{$variable}";},$variables));

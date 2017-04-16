@@ -260,6 +260,19 @@ class QueryBuilder {
 		$this->graphBuilder->values( $values );
 		return $this;
 	}
+	/**
+	 * Adds the given expression as a values to this query.
+	 *
+	 * @since 0.3
+	 *
+	 * @param string $expression
+	 * @return self
+	 * @throws InvalidArgumentException
+	 */
+	public function values_multi( array $values ) {
+		$this->graphBuilder->values_multi( $values );
+		return $this;
+	}
 
 	/**
 	 * Adds the given expression as a bind to this query.
