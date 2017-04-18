@@ -156,32 +156,21 @@ class GraphBuilder {
 
 	    if(!empty($values)){
 	        $variables = array_keys(array_flatten($values));
-          //  $this->usageValidator->trackUsedVariables( $variables );
-
-            $variablesList = implode(" ", array_map(function($variable){return "?{$variable}";},$variables));
-            $expression = "VALUES($variablesList)\n";
-
-            $valuesList = "{". implode("\n",array_map(function($vals) use($variables){
-
-                $actualValues = [];
-
-                foreach ($variables as $variable){
-                    if(isset($vals[$variable]))$actualValues[$variable]= $vals[$variable];
-                    else $actualValues[$variable] = "UNDEF";
-                }
-                return '('.implode(" ", $actualValues).')';
-
-            }, $values))."}";
-            $expression.=$valuesList;
-            //dd($expression);
-
-            $this->values[] = $expression ;
+                $variablesList = implode(" ", array_map(function($variable){return "?{$variable}";},$variables));
+                $expression = "VALUES($variablesList)\n";
+                $valuesList = "{". implode("\n",array_map(function($vals) use($variables){
+                    $actualValues = [];
+                    foreach ($variables as $variable){
+                        if(isset($vals[$variable]))$actualValues[$variable]= $vals[$variable];
+                        else $actualValues[$variable] = "UNDEF";
+                        }
+                        return '('.implode(" ", $actualValues).')';
+                        }, $values))."}";
+                        $expression.=$valuesList;
+                        $this->values[] = $expression ;
+            }
+            return $this;
         }
-
-
-
-		return $this;
-	}
 	
 	/**
 	 * Adds the given expression as a values to this query.
@@ -192,32 +181,31 @@ class GraphBuilder {
 	 */
 	public function values(array $values) {
 	    if(!empty($values)){
-	        $variables = array_keys($values);
-		    $variablesList = implode(" ", array_map(function($variable){return "{$variable}";},$variables));
-            $expression = "VALUES $variablesList";
-        	$valueArray = $values[$variables[0]];
-			foreach ($valueArray as $value) {
-	                    $val = trim($value, "'\"");
-	                    try {
-							$this->expressionValidator
-							->validate( $val, ExpressionValidator::VALIDATE_PREFIXED_IRI);
-						    $val = "{$val}";
-		                } 
-		                catch (InvalidArgumentException  $e){
-							if(\URL::isValidUrl($val)){
-								$val = "<{$val}>";
-							}
-							else {
-								$val = "'{$val}'";
-						    }
-		                }
-						$actualValues[] = $val;
-	                }
-			$expression .= '{' . implode(" ", $actualValues) . '}';
-            $this->values[] = $expression ;
+                $variables = array_keys($values);
+                $variablesList = implode(" ", array_map(function($variable){return "{$variable}";},$variables));
+                $expression = "VALUES $variablesList";
+                $valueArray = $values[$variables[0]];
+                foreach ($valueArray as $value) {
+                    $val = trim($value, "'\"");
+                    try {
+                        $this->expressionValidator->validate( $val, ExpressionValidator::VALIDATE_PREFIXED_IRI);
+                        $val = "{$val}";
+                        }
+                    catch (InvalidArgumentException  $e){
+                        if(\URL::isValidUrl($val)){
+                            $val = "<{$val}>";
+                        }
+                        else {
+                            $val = "'{$val}'";
+                        }
+		    }
+                    $actualValues[] = $val;
+                }
+                $expression .= '{' . implode(" ", $actualValues) . '}';
+                $this->values[] = $expression ;
+            }
+            return $this;
         }
-		return $this;
-	}
 	
 	/**
 	 * Adds the given expression as a bind to this query.
