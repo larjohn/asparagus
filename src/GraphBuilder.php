@@ -179,7 +179,7 @@ class GraphBuilder {
 	 * @return self
 	 * @throws InvalidArgumentException
 	 */
-	public function values(array $values) {
+	public function values(array $values, $url = false) {
 	    if(!empty($values)){
                 $variables = array_keys($values);
                 $variablesList = implode(" ", array_map(function($variable){return "{$variable}";},$variables));
@@ -192,7 +192,7 @@ class GraphBuilder {
                         $val = "{$val}";
                         }
                     catch (InvalidArgumentException  $e){
-                        if(\URL::isValidUrl($val)){
+                        if(\URL::isValidUrl($val) || $url ){
                             $val = "<{$val}>";
                         }
                         else {
