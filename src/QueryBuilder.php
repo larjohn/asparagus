@@ -256,8 +256,8 @@ class QueryBuilder {
 	 * @return self
 	 * @throws InvalidArgumentException
 	 */
-	public function values( array $values ) {
-		$this->graphBuilder->values( $values );
+	public function values( array $values , $url = false) {
+		$this->graphBuilder->values( $values , $url );
 		return $this;
 	}
 	/**
